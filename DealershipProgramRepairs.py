@@ -24,23 +24,23 @@ class Admin:
 #Invoice Class
 
 class Invoice:
-    def __init__(self):
-        self.inv_id = 0
-        self.name = ""
-        self.dob = ""
-        self.phone = ""
-        self.email = ""
-        self.card_name = ""
-        self.card_number = ""
-        self.card_expiration = ""
-        self.card_cvv = ""
-        self.car_make = ""
-        self.car_model = ""
-        self.car_year = ""
-        self.car_color = ""
-        self.issue = ""
-        self.diag_or_repair = ""
-        self.est_labor_hrs = 0.0
+    def __init__(self, inv_id = 0, name = "", dob = "", phone = "", email = "", card_name = "", card_number = "", card_expiration = "", card_ccv = "", car_make = "", car_model = "", car_year = "", car_color = "", issue = "", diag_or_repair = "", est_labor = 0):
+        self.inv_id = inv_id
+        self.name = name
+        self.dob = dob
+        self.phone = phone
+        self.email = email
+        self.card_name = card_name
+        self.card_number = card_number
+        self.card_expiration = card_expiration
+        self.card_ccv = card_ccv
+        self.car_make = car_make
+        self.car_model = car_model
+        self.car_year = car_year
+        self.car_color = car_color
+        self.issue = issue
+        self.diag_or_repair = diag_or_repair
+        self.est_labor_hrs = est_labor
         self.hrs_per_day = 8
         self.per_hour_pay = 25
         self.total_labor_cost = 0.0
@@ -50,7 +50,7 @@ class Invoice:
         self.eta_days = 0
 #Create Invoice
     def create_invoice(self):
-        self.inv_id = input("What is the invoice ID? ")
+        self.inv_id = int(input("What is the invoice ID? "))
         self.name = input("What is the customer's name? ")
         self.dob = input("What is the customer's DOB? ")
         self.phone = input("What is the customer's phone? ")
@@ -58,7 +58,7 @@ class Invoice:
         self.card_number = input("What is the customer's card number? ")
         self.card_name = input("What is the customer's card name? ")
         self.card_expiration = input("What is the customer's card expiration? ")
-        self.card_cvv = input("What is the customer's card cvv? ")
+        self.card_ccv = input("What is the customer's card cvv? ")
         self.car_make = input("What is the customer's car make? ")
         self.car_model = input("What is the customer's car model? ")
         self.car_year = input("What is the customer's car year? ")
@@ -71,29 +71,39 @@ class Invoice:
         self.total_cost = self.total_cost_calc()
         self.eta_days = self.eta_calc()
 
-        #Create Invoice Code Here
+        new_inv = Invoice(self.inv_id, self.name, self.dob, self.phone, self.email, self.card_name, self.card_number, self.card_expiration, self.card_ccv, self.car_make, self.car_model, self.car_year, self.car_color, self.issue, self.diag_or_repair, self.est_labor_hrs)
+        invoices.append(new_inv)
 
 #Calculate Labor Cost
     def labor_calc(self):
         total_labor_cost = self.per_hour_pay * self.est_labor_hrs
         return total_labor_cost
+
 #Calculate Parts Cost
     def parts_calc(self):
         parts_cost = 0
         for e in self.parts_needed:
             parts_cost += e
         return parts_cost
+
 #Calculate Total Cost
     def total_cost_calc(self):
         total_cost = self.parts_cost + self.total_labor_cost
         return total_cost
+
 #Calculate ETA
     def eta_calc(self):
         eta = self.est_labor_hrs / self.hrs_per_day
         return eta
+
 #Add Invoice to Wait List
     def update_wait_list(self):
         schedule.add_schedule(self.name, self.phone, self.email)
+
+    def display_invoices(self):
+        print("--------------------------------------------")
+        print("Name: ", self.name, "DOB: ", self.dob, "\nPhone: ", self.phone, "\nEmail: ", self.email, "\nCard Name: ", self.card_name, "\nCard Number", self.card_number, "\nCard Expiration: ", self.card_expiration, "\nCard CCV: ", self.card_ccv, "\nCar Make: ", self.car_make, "\nCar Model: ", self.car_model, "\nCar Year: ", self.car_year, "\nCar Color: ", self.car_color, "\nIssue: ", self.issue, "\nDiagnostics or Repair: ", self.diag_or_repair, "\nEstimated Labor Hours: ", self.est_labor_hrs)
+        print("--------------------------------------------")
 
 #Inventory Class
 
@@ -106,6 +116,7 @@ class Inventory:
         self.int_parts_price = 100
         self.ext_parts_price = 50
         self.main_frame_parts_price = 175
+
 #Check Inventory Stock
     def check_inv(self):
         print("Total Engine Parts: ", self.parts["Engine Parts"])
@@ -123,6 +134,7 @@ class Inventory:
                 print("Okay, continuing")
             else:
                 print("Invalid input")
+
 #Update Inventory Stock
     def update_inv(self):
         order_goal = 50
@@ -185,14 +197,38 @@ class Scheduling:
 #Add to Schedule
     def add_schedule(self, name = "", phone = "", email = ""):
         self.wait_list.update({self.name: {"Phone: ": self.phone, "Email: ": self.email}})
+
 #Remove Completed Job From Schedule
     def complete_from_schedule(self):
 
 #Remove Cancelled Job From Schedule
     def remove_schedule(self):
 
-
+invoice = Invoice()
 inventory = Inventory()
 schedule = Scheduling()
+invoices = []
+inventories = []
+schedules = []
 save_list = {}
 loaded_list = {}
+
+while True:
+    print("\n1. Create Invoice\n2. Print Invoice\n3. Check Inventory\n4. Check Schedule\n5. Exit Program")
+    ch = int(input("What is your choice? "))
+
+    if ch == 1:
+        new_invoice = Invoice()
+        new_invoice.create_invoice()
+
+    elif ch == 2:
+        for e in invoices:
+            e.display_invoices()
+
+    elif ch == 3:
+
+    elif ch == 4:
+
+    elif ch == 5:
+        print("Exiting program...")
+        break
